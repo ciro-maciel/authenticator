@@ -47,8 +47,13 @@ const TokenStage = ({ token }) => {
   if (!token) return null;
 
   return (
-    <Stack align="center" gap={60} py={40} w="100%">
-      <Stack align="center" gap={8} w="100%">
+    <Stack
+      align="center"
+      gap={{ base: 20, md: 32 }}
+      py={{ base: 10, md: 20 }}
+      w="100%"
+    >
+      <Stack align="center" gap={4} w="100%">
         <Text fz={11} fw={800} c="gray.4" tt="uppercase" lts="2px">
           {token.issuer} / {token.label}
         </Text>

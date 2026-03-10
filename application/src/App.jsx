@@ -46,8 +46,8 @@ function App() {
   const activeToken = getActiveToken();
 
   return (
-    <Container size="xl" py={{ base: 20, md: 80 }}>
-      <Stack gap={{ base: 40, md: 60 }}>
+    <Container size="xl" py={{ base: 10, md: 60 }}>
+      <Stack gap={{ base: 24, md: 48 }}>
         {/* Zen Header: O Anúncio */}
         <Group justify="space-between" align="center" wrap="nowrap">
           <Stack gap={4}>
@@ -91,14 +91,18 @@ function App() {
           NOVO TOKEN
         </Button>
 
-        <SimpleGrid cols={{ base: 1, md: 2 }} spacing={{ base: 40, md: 120 }}>
+        <SimpleGrid
+          cols={{ base: 1, sm: 2 }}
+          spacing={{ base: 24 }}
+          align="flex-start"
+        >
           {/* Zen Stage Context: Performance */}
           <Box>
             <Paper
-              p={{ base: 30, md: 60 }}
+              p={{ base: 20, md: 40 }}
               style={{
                 borderStyle: "dashed",
-                minHeight: 300,
+                minHeight: 240,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -115,8 +119,8 @@ function App() {
           </Box>
 
           {/* Zen Dense Context: Data */}
-          <Stack gap={40}>
-            <Stack gap="md">
+          <Stack gap={32}>
+            <Stack gap="sm">
               <Text fz={11} fw={800} c="gray.4" tt="uppercase" lts="1.5px">
                 Tokens Ativos ({tokens.length})
               </Text>
@@ -127,20 +131,40 @@ function App() {
               />
             </Stack>
 
+            {/* <Box visibleFrom="sm" h="200"></Box> */}
+
             <MemberList members={members} onInvite={openMemberModal} />
           </Stack>
         </SimpleGrid>
 
-        <Box bd={{ top: "1px solid gray.2" }} pt="xl" mt="xl">
-          <Group justify="space-between">
-            <Text fz={10} fw={800} c="gray.3" tt="uppercase" lts="2px">
-              Zen Security Protocol v1.0.0
+        <Group justify="space-between" gap="md">
+          <Text
+            fz={10}
+            fw={800}
+            c="gray.3"
+            tt="uppercase"
+            lts="2px"
+            ta={{ base: "center", sm: "left" }}
+          >
+            Security Protocol{" "}
+            <Box component="span" visibleFrom="xs">
+              v1.0.0
+            </Box>
+          </Text>
+          <Group gap={6} c="gray.3">
+            <Text fz={10} fw={800} tt="uppercase" lts="2px">
+              © 2026
             </Text>
-            <Text fz={10} fw={800} c="gray.3" tt="uppercase" lts="2px">
-              © 2026 RiLiGar
+            <Box w={8} h={1} bg="gray.2" visibleFrom="xs" />
+            <Text fz={10} fw={900} tt="uppercase" lts="2px">
+              Ciro{" "}
+              <Box component="span" visibleFrom="sm">
+                Cesar
+              </Box>{" "}
+              Maciel
             </Text>
           </Group>
-        </Box>
+        </Group>
 
         <AddTokenModal
           opened={tokenModalOpened}

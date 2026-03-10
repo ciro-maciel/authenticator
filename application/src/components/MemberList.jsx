@@ -26,7 +26,7 @@ const MemberList = ({ members, onInvite }) => {
           onClick={onInvite}
           size="sm"
         >
-          <IconUserPlus size={16} stroke={1.5} />
+          <IconUserPlus size={16} stroke={2.5} />
         </ActionIcon>
       </Group>
 

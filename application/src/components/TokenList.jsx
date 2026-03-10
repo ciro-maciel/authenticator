@@ -11,7 +11,7 @@ import { IconFingerprint } from "@tabler/icons-react";
 
 const TokenList = ({ tokens, activeId, onSelect }) => {
   return (
-    <ScrollArea h={450} pr="md">
+    <ScrollArea>
       <Stack gap={2}>
         {tokens.map((token) => (
           <UnstyledButton
