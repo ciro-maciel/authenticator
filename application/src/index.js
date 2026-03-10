@@ -156,6 +156,19 @@ const app = new Elysia()
           set.status = 400;
           return { success: false, message: error.message };
         }
+      })
+
+      .delete("/tokens/:id", async ({ params: { id }, set }) => {
+        try {
+          await db.transaction(async (tx) => {
+            await tx.delete(memberTokens).where(eq(memberTokens.tokenId, id));
+            await tx.delete(tokens).where(eq(tokens.id, id));
+          });
+          return { success: true };
+        } catch (error) {
+          set.status = 400;
+          return { success: false, message: error.message };
+        }
       }),
   )
   .listen(3000);

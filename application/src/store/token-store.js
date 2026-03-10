@@ -112,6 +112,35 @@ export const useTokenStore = create((set, get) => ({
     }
   },
 
+  removeToken: async (id) => {
+    try {
+      const response = await fetch(`/api/tokens/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) throw new Error("Falha ao remover token");
+
+      const { activeTokenId } = get();
+      if (activeTokenId === id) {
+        set({ activeTokenId: null });
+      }
+
+      await get().fetchTokens();
+
+      notifications.show({
+        title: "Removido",
+        message: "Token removido com sucesso",
+        color: "gray.9",
+      });
+    } catch (error) {
+      notifications.show({
+        title: "Erro",
+        message: error.message,
+        color: "red",
+      });
+    }
+  },
+
   removeMember: async (id) => {
     try {
       const response = await fetch(`/api/members/${id}`, {
