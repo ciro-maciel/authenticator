@@ -70,7 +70,53 @@ const app = new Elysia()
             issuer: t.Optional(t.String()),
           }),
         },
-      ),
+      )
+
+      .get("/members", async () => {
+        // Assume company '1' for now
+        return await db
+          .select()
+          .from(members)
+          .where(eq(members.companyId, "1"));
+      })
+
+      .post(
+        "/members",
+        async ({ body, set }) => {
+          try {
+            const { companyId, name, email, role } = body;
+            await db.insert(members).values({
+              id: crypto.randomUUID(),
+              companyId,
+              name,
+              email,
+              role: role || "member",
+            });
+            return { success: true };
+          } catch (error) {
+            set.status = 400;
+            return { success: false, message: error.message };
+          }
+        },
+        {
+          body: t.Object({
+            companyId: t.String(),
+            name: t.String(),
+            email: t.String(),
+            role: t.Optional(t.String()),
+          }),
+        },
+      )
+
+      .delete("/members/:id", async ({ params: { id }, set }) => {
+        try {
+          await db.delete(members).where(eq(members.id, id));
+          return { success: true };
+        } catch (error) {
+          set.status = 400;
+          return { success: false, message: error.message };
+        }
+      }),
   )
   .listen(3000);
 

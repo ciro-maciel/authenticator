@@ -70,22 +70,68 @@ export const useTokenStore = create((set, get) => ({
   },
 
   fetchMembers: async () => {
-    // Mocking members for now
-    const mockMembers = [
-      {
-        id: "1",
-        name: "Ciro Maciel",
-        email: "ciro@riligar.com",
-        role: "admin",
-      },
-      { id: "2", name: "Ana Silva", email: "ana@riligar.com", role: "member" },
-      {
-        id: "3",
-        name: "João Souza",
-        email: "joao@riligar.com",
-        role: "member",
-      },
-    ];
-    set({ members: mockMembers });
+    set({ isLoading: true });
+    try {
+      const response = await fetch("/api/members");
+      const data = await response.json();
+      set({ members: data, isLoading: false });
+    } catch (error) {
+      set({ error: error.message, isLoading: false });
+    }
+  },
+
+  addMember: async (memberData) => {
+    set({ isLoading: true });
+    try {
+      const response = await fetch("/api/members", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...memberData, companyId: "1" }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Falha ao adicionar membro");
+      }
+
+      await get().fetchMembers();
+
+      notifications.show({
+        title: "Sucesso",
+        message: "Membro convidado e adicionado",
+        color: "gray.9",
+      });
+    } catch (error) {
+      set({ isLoading: false });
+      notifications.show({
+        title: "Erro de Protocolo",
+        message: error.message,
+        color: "red",
+      });
+    }
+  },
+
+  removeMember: async (id) => {
+    try {
+      const response = await fetch(`/api/members/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) throw new Error("Falha ao remover membro");
+
+      await get().fetchMembers();
+
+      notifications.show({
+        title: "Removido",
+        message: "Acesso revogado com sucesso",
+        color: "gray.9",
+      });
+    } catch (error) {
+      notifications.show({
+        title: "Erro",
+        message: error.message,
+        color: "red",
+      });
+    }
   },
 }));

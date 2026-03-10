@@ -47,10 +47,10 @@ const TokenStage = ({ token }) => {
   if (!token) return null;
 
   return (
-    <Stack align="center" gap="xl" py={40}>
-      <Stack align="center" gap={4}>
-        <Text fz={11} fw={800} c="gray.4" tt="uppercase" lts="1.5px">
-          {token.label}
+    <Stack align="center" gap={60} py={40} w="100%">
+      <Stack align="center" gap={8} w="100%">
+        <Text fz={11} fw={800} c="gray.4" tt="uppercase" lts="2px">
+          {token.issuer} / {token.label}
         </Text>
         <UnstyledButton
           onClick={() => {
@@ -63,20 +63,26 @@ const TokenStage = ({ token }) => {
             });
           }}
         >
-          <Title order={1} fz={120} fw={900} lh={1} lts="-0.04em">
+          <Title
+            order={1}
+            fz={{ base: 56, xs: 64, sm: 80, md: 120 }}
+            fw={900}
+            lh={1}
+            lts="-0.04em"
+          >
             {code}
           </Title>
         </UnstyledButton>
       </Stack>
 
       <RingProgress
-        size={80}
-        thickness={4}
+        size={90}
+        thickness={6}
         roundCaps
         sections={[{ value: (timeLeft / 30) * 100, color: "gray.9" }]}
         label={
           <Center>
-            <Text fz={11} fw={800} c="gray.4">
+            <Text fz={12} fw={900} c="gray.9">
               {timeLeft}S
             </Text>
           </Center>
