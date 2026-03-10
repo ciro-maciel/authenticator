@@ -26,12 +26,24 @@ export const tokens = sqliteTable("tokens", {
 
 export const members = sqliteTable("members", {
   id: text("id").primaryKey(),
-  userId: text("user_id").notNull(),
+  userId: text("user_id"), // Optional for now
   companyId: text("company_id")
     .notNull()
     .references(() => companies.id),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  token: text("token").notNull().unique(),
   role: text("role").notNull().default("member"), // 'admin' | 'member'
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),
+});
+
+export const memberTokens = sqliteTable("member_tokens", {
+  memberId: text("member_id")
+    .notNull()
+    .references(() => members.id),
+  tokenId: text("token_id")
+    .notNull()
+    .references(() => tokens.id),
 });

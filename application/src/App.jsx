@@ -40,8 +40,11 @@ function App() {
 
   useEffect(() => {
     fetchTokens();
-    fetchMembers();
   }, []);
+
+  useEffect(() => {
+    fetchMembers(activeTokenId);
+  }, [activeTokenId]);
 
   const activeToken = getActiveToken();
 
@@ -178,7 +181,7 @@ function App() {
           opened={memberModalOpened}
           onClose={closeMemberModal}
           onSubmit={(values) => {
-            addMember(values);
+            addMember(values, activeTokenId);
           }}
         />
       </Stack>

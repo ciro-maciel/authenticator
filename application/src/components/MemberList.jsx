@@ -7,6 +7,7 @@ import {
   ActionIcon,
   Tooltip,
   Paper,
+  Box,
 } from "@mantine/core";
 import { IconTrash, IconUserPlus } from "@tabler/icons-react";
 import { useTokenStore } from "../store/token-store";
@@ -47,9 +48,26 @@ const MemberList = ({ members, onInvite }) => {
                 <Text size="sm" fw={700} c="gray.9">
                   {member.name}
                 </Text>
-                <Text size="xs" c="gray.5">
-                  {member.email}
-                </Text>
+                <Group gap={4}>
+                  <Text size="xs" c="gray.5">
+                    {member.email}
+                  </Text>
+                  <Box
+                    w={4}
+                    h={4}
+                    bg="gray.2"
+                    style={{ borderRadius: "50%" }}
+                  />
+                  <Text
+                    size="xs"
+                    fw={800}
+                    c="gray.9"
+                    tt="uppercase"
+                    lts="0.5px"
+                  >
+                    {member.token}
+                  </Text>
+                </Group>
               </Stack>
             </Group>
 
@@ -80,7 +98,7 @@ const MemberList = ({ members, onInvite }) => {
             style={{ textAlign: "center" }}
           >
             <Text fz={11} fw={800} c="gray.4" tt="uppercase" lts="1px">
-              Nenhum membro vinculado ao protocolo
+              Nenhum membro vinculado a este protocolo
             </Text>
           </Paper>
         )}

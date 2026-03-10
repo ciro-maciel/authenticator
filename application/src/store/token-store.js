@@ -69,10 +69,11 @@ export const useTokenStore = create((set, get) => ({
     }
   },
 
-  fetchMembers: async () => {
+  fetchMembers: async (tokenId) => {
     set({ isLoading: true });
     try {
-      const response = await fetch("/api/members");
+      const url = tokenId ? `/api/members?tokenId=${tokenId}` : "/api/members";
+      const response = await fetch(url);
       const data = await response.json();
       set({ members: data, isLoading: false });
     } catch (error) {
@@ -80,13 +81,13 @@ export const useTokenStore = create((set, get) => ({
     }
   },
 
-  addMember: async (memberData) => {
+  addMember: async (memberData, tokenId) => {
     set({ isLoading: true });
     try {
       const response = await fetch("/api/members", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...memberData, companyId: "1" }),
+        body: JSON.stringify({ ...memberData, companyId: "1", tokenId }),
       });
 
       if (!response.ok) {
@@ -94,7 +95,7 @@ export const useTokenStore = create((set, get) => ({
         throw new Error(errorData.message || "Falha ao adicionar membro");
       }
 
-      await get().fetchMembers();
+      await get().fetchMembers(tokenId);
 
       notifications.show({
         title: "Sucesso",

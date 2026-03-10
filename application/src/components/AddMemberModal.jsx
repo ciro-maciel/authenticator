@@ -41,6 +41,9 @@ const AddMemberModal = ({ opened, onClose, onSubmit }) => {
           <Title order={2} fz={24} fw={900} lts="-0.02em">
             Convidar Membro
           </Title>
+          <Text fz={12} c="gray.5" fw={500}>
+            Um token de acesso exclusivo será gerado para este membro.
+          </Text>
         </Stack>
       }
       padding={40}

@@ -3,7 +3,7 @@ import { cors } from "@elysiajs/cors";
 import { jwt } from "@elysiajs/jwt";
 import { mfaService } from "./services/mfa-service";
 import { db } from "./db";
-import { companies, tokens, members } from "./db/schema";
+import { companies, tokens, members, memberTokens } from "./db/schema";
 import { eq, and } from "drizzle-orm";
 import crypto from "crypto";
 
@@ -72,26 +72,62 @@ const app = new Elysia()
         },
       )
 
-      .get("/members", async () => {
+      .get("/members", async ({ query }) => {
+        const { tokenId } = query;
         // Assume company '1' for now
-        return await db
-          .select()
-          .from(members)
-          .where(eq(members.companyId, "1"));
+        let queryBuilder = db
+          .select({
+            id: members.id,
+            name: members.name,
+            email: members.email,
+            token: members.token,
+            role: members.role,
+            createdAt: members.createdAt,
+          })
+          .from(members);
+
+        if (tokenId) {
+          queryBuilder = queryBuilder
+            .innerJoin(memberTokens, eq(members.id, memberTokens.memberId))
+            .where(
+              and(
+                eq(members.companyId, "1"),
+                eq(memberTokens.tokenId, tokenId),
+              ),
+            );
+        } else {
+          queryBuilder = queryBuilder.where(eq(members.companyId, "1"));
+        }
+
+        return await queryBuilder;
       })
 
       .post(
         "/members",
         async ({ body, set }) => {
           try {
-            const { companyId, name, email, role } = body;
-            await db.insert(members).values({
-              id: crypto.randomUUID(),
-              companyId,
-              name,
-              email,
-              role: role || "member",
+            const { companyId, name, email, role, tokenId } = body;
+            const token = crypto.randomBytes(4).toString("hex").toUpperCase();
+            const memberId = crypto.randomUUID();
+
+            await db.transaction(async (tx) => {
+              await tx.insert(members).values({
+                id: memberId,
+                companyId,
+                name,
+                email,
+                token,
+                role: role || "member",
+              });
+
+              if (tokenId) {
+                await tx.insert(memberTokens).values({
+                  memberId,
+                  tokenId,
+                });
+              }
             });
+
             return { success: true };
           } catch (error) {
             set.status = 400;
@@ -104,13 +140,17 @@ const app = new Elysia()
             name: t.String(),
             email: t.String(),
             role: t.Optional(t.String()),
+            tokenId: t.Optional(t.String()),
           }),
         },
       )
 
       .delete("/members/:id", async ({ params: { id }, set }) => {
         try {
-          await db.delete(members).where(eq(members.id, id));
+          await db.transaction(async (tx) => {
+            await tx.delete(memberTokens).where(eq(memberTokens.memberId, id));
+            await tx.delete(members).where(eq(members.id, id));
+          });
           return { success: true };
         } catch (error) {
           set.status = 400;
